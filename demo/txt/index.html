@@ -1,0 +1,69 @@
+<head>
+    <title>Contextualize.Dev Text Demo</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/xml/xml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/css/css.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/htmlmixed/htmlmixed.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/javascript/javascript.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.css" />
+    <style>
+        html {
+            max-width: 70ch;
+            padding: 1em 1em;
+            margin: auto;
+            line-height: 1.5;
+            font-size: 1.25em;
+            font-family: sans-serif;
+        }
+
+        .CodeMirror {
+            font-size: small;
+            outline: 1px solid #333
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Contextualize.Dev Text Demo</h2>
+
+    <h3>Inputs</h3>
+    <form>
+        <label>
+            Prompt:
+            <input id="txt-prompt" style="width:100%; font-size: inherit;"
+                value="explain financial literacy to a first-time visitor of this website" />
+        </label>
+    </form>
+
+    <h3>Code</h3>
+    <textarea id="txt-code"></textarea>
+    <script>(function () {
+            const wrap = txt => '<' + txt + '></' + 'script' + '>';
+            const elem = document.querySelector('#txt-code');
+            const editor = CodeMirror.fromTextArea(elem, { mode: 'htmlmixed', readOnly: true });
+            editor.setSize(null, editor.defaultTextHeight() + 2 * 4);
+            const prompt = document.querySelector('#txt-prompt');
+
+            let t = null;
+            const update = () => {
+                const script = document.createElement('script');
+                // script.src = 'https://contextualize.github.io/dev/gen.js';
+                script.src = '../../gen.js';
+                script.dataset['type'] = 'txt';
+                script.dataset['prompt'] = prompt.value;
+                script.dataset['loading'] = 'Loading...';
+                editor.getDoc().setValue(script.outerHTML);
+                if (t) clearTimeout(t)
+                t = setTimeout(() => {
+                    document.querySelector('#txt-output').innerHTML = '';
+                    document.querySelector('#txt-output').appendChild(script);
+                }, 1_000);
+            };
+            prompt.addEventListener('input', update);
+            update();
+        })();
+    </script>
+
+    <h3>Result</h3>
+    <div id="txt-output"></div>
+</body>
