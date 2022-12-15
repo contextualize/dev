@@ -12,7 +12,7 @@
             document.querySelector(self.dataset.target).innerText = await data;
         } else {
             const txt = document.createElement('p');
-            txt.innerText = self.dataset.loading || 'Loading...';
+            txt.innerText = self.dataset.loading || '...';
             self.after(txt);
             txt.innerText = await data;
         }
