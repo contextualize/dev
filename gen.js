@@ -8,6 +8,8 @@
         const data = fetch(url).then(res => res.json()).then(x => x.result);
         if (self.dataset.callback) {
             window[self.dataset.callback](await data);
+        } else if (self.dataset.target) {
+            document.querySelector(self.dataset.target).innerText = await data;
         } else {
             const txt = document.createElement('p');
             txt.innerText = self.dataset.loading || 'Loading...';
@@ -24,6 +26,8 @@
         const data = fetch(url).then(res => res.json()).then(x => x.result);
         if (self.dataset.callback) {
             window[self.dataset.callback](await data);
+        } else if (self.dataset.target) {
+            document.querySelector(self.dataset.target).setAttribute('src', await data);
         } else {
             const img = document.createElement('img');
             img.width = size;
