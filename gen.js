@@ -1,7 +1,7 @@
 (function () {
     const self = document.currentScript;
-    // const url = new URL('https://iguanagothere.azurewebsites.net');
-    const url = new URL('http://localhost:7071');
+    // const url = new URL('http://localhost:7071');
+    const url = new URL('https://iguanagothere.azurewebsites.net');
     const gentxt = async () => {
         url.pathname = '/api/openai_text_completion';
         url.searchParams.set('prompt', self.dataset['prompt']);
