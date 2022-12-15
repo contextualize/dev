@@ -47,6 +47,10 @@ img {
     object-position: center;
 }
 
+p {
+    text-align: justify;
+}
+
 .cover {
     background-position: center;
     background-size: cover;
