@@ -2,40 +2,30 @@ body {
     margin: auto;
     padding: 0;
     line-height: 1.5;
-    font-size: 1.25em;
+    font-size: 1em;
     font-family: sans-serif;
 }
 
-header {
+header,
+footer {
     height: 100%;
     font-size: large;
 }
 
 section {
-    max-width: 70ch;
     padding: 4em 1em;
-    margin: auto;
+}
+
+header section {
+    overflow-y: auto;
+    max-height: 100%;
 }
 
 section:last-child {
     padding-bottom: 0;
 }
 
-.row {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    width: 100%;
-    min-height: 300px;
-    margin-top: auto;
-    margin-bottom: auto;
-}
-
 .col {
-    display: flex;
-    flex-direction: column;
-    flex-basis: 100%;
-    flex: 1;
     padding-left: 32px;
     padding-right: 32px;
 }
