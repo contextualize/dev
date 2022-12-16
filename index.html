@@ -6,15 +6,21 @@
 
 <script>
     const url = new URL(window.location.href);
-    document.body.innerHTML = url.searchParams.get('loading') || '...';
+    const type = url.searchParams.get('type');
+    const wrap = response => {
+        if (type === 'txt') {
+            return `<p>${response}</p>`;
+        } else if (type === 'img') {
+            return `<img src="${response}"/>`;
+        } else {
+            throw new Error(`Unknown requested type: "${type}".`);
+        }
+    };
+
+    document.body.innerHTML = wrap(url.searchParams.get('loading')) || (type === 'txt' ? '...' : '');
 
     window.callback = function (response) {
-        let wrapped = '';
-        if (url.searchParams.get('type') === 'txt') {
-            wrapped = `<p>${response}</p>`;
-        } else if (url.searchParams.get('type') === 'img') {
-            wrapped = `<img src="${response}"/>`;
-        }
+        const wrapped = wrap(response);
         document.body.innerHTML = wrapped;
         window.parent.postMessage({ name: self.name, response: wrapped }, '*');
     };
