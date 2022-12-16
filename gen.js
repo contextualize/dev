@@ -4,7 +4,7 @@
     const url = new URL('https://iguanagothere.azurewebsites.net');
     const gentxt = async () => {
         url.pathname = '/api/openai_text_completion';
-        url.searchParams.set('prompt', self.dataset['prompt']);
+        url.searchParams.set('prompt', self.dataset.prompt);
         const data = fetch(url).then(res => res.json()).then(x => x.result);
         if (self.dataset.callback) {
             window[self.dataset.callback](await data);
@@ -37,7 +37,12 @@
         }
     };
 
-    const type = self.dataset['type'];
+    // Look for mandatory attributes.
+    if (!self.dataset.prompt) throw new Error(`Missing "data-prompt" attribute.`);
+
+    // Determine the function to call based on the type requested.
+    const type = self.dataset.type;
     const generr = () => { throw new Error(`Unknown dataset type: "${type}".`) };
     ({ 'txt': gentxt, 'img': genimg }[type] || generr)();
+    document.currentScript.remove();
 })();

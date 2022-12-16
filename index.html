@@ -1,0 +1,37 @@
+<head>
+    <title>benci.ai</title>
+</head>
+
+<body></body>
+
+<script>
+    // Set the loading text.
+    document.body.innerText = window.frameElement.dataset.loading || '...';
+
+    const resize = () => {
+        window.frameElement.style.display = '';
+        window.frameElement.style.height = 0;
+        window.frameElement.style.height = document.body.scrollHeight + 'px';
+        window.frameElement.style.width = window.frameElement.style.width || '100%';
+        window.frameElement.setAttribute('scrolling', 'no');
+        window.frameElement.setAttribute('frameborder', 0);
+    };
+
+    window.callback = function (txt) {
+        document.body.innerText = txt;
+        resize();
+    };
+
+    (function () {
+        resize();
+        const elem = document.createElement('script');
+        elem.src = './gen.js';
+        elem.dataset.callback = 'callback';
+        ['type', 'size', 'prompt']
+            .filter(x => window.frameElement.dataset[x])
+            .forEach(x => elem.dataset[x] = window.frameElement.dataset[x]);
+        document.head.appendChild(elem);
+        document.currentScript.remove();
+    })();
+
+</script>
