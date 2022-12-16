@@ -1,32 +1,33 @@
 <head>
     <title>benci.ai</title>
-
-    <script>
-        const url = new URL(window.location.href);
-
-        window.callback = function (response) {
-            let wrapped = '';
-            if (url.searchParams.get('type') === 'txt') {
-                wrapped = `<p>${response}</p>`;
-            } else if (url.searchParams.get('type') === 'img') {
-                wrapped = `<img src="${response}"/>`;
-            }
-            document.body.innerHTML = wrapped;
-            window.parent.postMessage({ name: self.name, response: wrapped }, '*');
-        };
-
-        (function () {
-            const elem = document.createElement('script');
-            elem.src = './gen.js';
-            elem.dataset.callback = 'callback';
-            ['type', 'size', 'prompt']
-                .filter(x => url.searchParams.has(x))
-                .forEach(x => elem.dataset[x] = url.searchParams.get(x));
-            document.head.appendChild(elem);
-            document.currentScript.remove();
-        })();
-
-    </script>
+</head>
 
 <body></body>
-</head>
+
+<script>
+    const url = new URL(window.location.href);
+    document.body.innerHTML = url.searchParams.get('loading') || '...';
+
+    window.callback = function (response) {
+        let wrapped = '';
+        if (url.searchParams.get('type') === 'txt') {
+            wrapped = `<p>${response}</p>`;
+        } else if (url.searchParams.get('type') === 'img') {
+            wrapped = `<img src="${response}"/>`;
+        }
+        document.body.innerHTML = wrapped;
+        window.parent.postMessage({ name: self.name, response: wrapped }, '*');
+    };
+
+    (function () {
+        const elem = document.createElement('script');
+        elem.src = './gen.js';
+        elem.dataset.callback = 'callback';
+        ['type', 'size', 'prompt']
+            .filter(x => url.searchParams.has(x))
+            .forEach(x => elem.dataset[x] = url.searchParams.get(x));
+        document.head.appendChild(elem);
+        document.currentScript.remove();
+    })();
+
+</script>
