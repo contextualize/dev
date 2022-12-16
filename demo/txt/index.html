@@ -55,8 +55,7 @@
             let t = null;
             const update = () => {
                 const elem = document.createElement(tag.value);
-                // elem.src = 'https://contextualize.github.io/dev/';
-                elem.src = '../../';
+                elem.src = 'https://contextualize.github.io/dev/';
                 if (tag.value === 'script') {
                     elem.src += 'gen.js'
                     elem.dataset['type'] = 'txt';
@@ -70,11 +69,11 @@
                     params.set('loading', '...');
                     elem.src += '?' + params.toString();
                     elem.setAttribute('frameborder', 0);
+                    elem.setAttribute('height', '24');
                     elem.setAttribute('width', '100%');
                     elem.setAttribute('onload', '');
                     elem.setAttribute('name', 'i' + String(Math.random()).substring(2, 8));
-                    // elem.setAttribute('onload', "window.addEventListener('message',x=>this.height=x.data.name===this.name?x.data.height:'')");
-                    elem.setAttribute('onload', "window.addEventListener('message',x=>this.height=x.data.height)");
+                    elem.setAttribute('onload', "window.addEventListener('message', x => {if(x.data.name===this.name&&x.data.response)this.outerHTML=x.data.response})");
                 }
                 editor.getDoc().setValue(elem.outerHTML);
                 if (t) clearTimeout(t)
