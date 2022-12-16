@@ -1,0 +1,15 @@
+<!-- <iframe src="index.html?type=txt&prompt=test+message+warning+people+of+nuclear+fallout&loading=..." name="iii"
+    frameborder="0" style="width:100%"
+    onload="window.addEventListener('message', x => this.style.height = x.name === this.name ? x.height : '')"></iframe> -->
+<iframe src="index.html?type=txt&prompt=test+message+warning+people+of+nuclear+fallout&loading=..." name="iii"
+    frameborder="0" style="width:100%"
+    onload="window.addEventListener('message', x => this.height = x.data.name === this.name ? x.data.height : '')"></iframe>
+<!-- <iframe
+    src="https://contextualize.github.io/dev/?type=txt&prompt=test+message+warning+people+of+nuclear+fallout&loading=..."
+    frameborder="0" style="width:100%" onload="window.addEventListener('message', x => console.log(x))"></iframe> -->
+
+<script>
+    // window.addEventListener("message", event => {
+    //     document.querySelector('iframe').style.height = event.data.height + 'px';
+    // });
+</script>

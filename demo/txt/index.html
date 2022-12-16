@@ -30,6 +30,13 @@
     <h3>Inputs</h3>
     <form>
         <label>
+            Embed tag:
+            <select id="embed-tag" style="width:100%; font-size: inherit;">
+                <option selected>script</option>
+                <option>iframe</option>
+            </select>
+        </label>
+        <label>
             Prompt:
             <input id="txt-prompt" style="width:100%; font-size: inherit;"
                 value="explain financial literacy to a first-time visitor of this website" />
@@ -39,25 +46,44 @@
     <h3>Code</h3>
     <textarea id="txt-code"></textarea>
     <script>(function () {
-            const elem = document.querySelector('#txt-code');
-            const editor = CodeMirror.fromTextArea(elem, { mode: 'htmlmixed', readOnly: true });
+            const code = document.querySelector('#txt-code');
+            const editor = CodeMirror.fromTextArea(code, { mode: 'htmlmixed', readOnly: true });
             editor.setSize(null, editor.defaultTextHeight() + 2 * 4);
             const prompt = document.querySelector('#txt-prompt');
+            const tag = document.querySelector('#embed-tag');
 
             let t = null;
             const update = () => {
-                const script = document.createElement('script');
-                script.src = 'https://contextualize.github.io/dev/gen.js';
-                script.dataset['type'] = 'txt';
-                script.dataset['prompt'] = prompt.value;
-                script.dataset['loading'] = '...';
-                editor.getDoc().setValue(script.outerHTML);
+                const elem = document.createElement(tag.value);
+                // elem.src = 'https://contextualize.github.io/dev/';
+                elem.src = '../../';
+                if (tag.value === 'script') {
+                    elem.src += 'gen.js'
+                    elem.dataset['type'] = 'txt';
+                    elem.dataset['prompt'] = prompt.value;
+                    elem.dataset['loading'] = '...';
+
+                } else if (tag.value === 'iframe') {
+                    const params = new URLSearchParams();
+                    params.set('type', 'txt');
+                    params.set('prompt', prompt.value);
+                    params.set('loading', '...');
+                    elem.src += '?' + params.toString();
+                    elem.setAttribute('frameborder', 0);
+                    elem.setAttribute('width', '100%');
+                    elem.setAttribute('onload', '');
+                    elem.setAttribute('name', 'i' + String(Math.random()).substring(2, 8));
+                    // elem.setAttribute('onload', "window.addEventListener('message',x=>this.height=x.data.name===this.name?x.data.height:'')");
+                    elem.setAttribute('onload', "window.addEventListener('message',x=>this.height=x.data.height)");
+                }
+                editor.getDoc().setValue(elem.outerHTML);
                 if (t) clearTimeout(t)
                 t = setTimeout(() => {
                     document.querySelector('#txt-output').innerHTML = '';
-                    document.querySelector('#txt-output').appendChild(script);
+                    document.querySelector('#txt-output').appendChild(elem);
                 }, 1_000);
             };
+            tag.addEventListener('change', update);
             prompt.addEventListener('input', update);
             update();
         })();
