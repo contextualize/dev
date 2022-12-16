@@ -74,10 +74,8 @@
 
                     // Set the appropriate attributes to listen to the response and make it pretty.
                     elem.setAttribute('frameborder', 0);
-                    elem.setAttribute('height', '24');
+                    elem.setAttribute('height', '48');
                     elem.setAttribute('width', '100%');
-                    elem.setAttribute('name', 'i' + String(Math.random()).substring(2, 8));
-                    elem.setAttribute('onload', "window.addEventListener('message', x => {if(x.data.name===this.name&&x.data.response)this.outerHTML=x.data.response})");
                 }
 
                 editor.getDoc().setValue(elem.outerHTML);
