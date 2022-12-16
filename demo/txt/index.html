@@ -49,32 +49,37 @@
             const code = document.querySelector('#txt-code');
             const editor = CodeMirror.fromTextArea(code, { mode: 'htmlmixed', readOnly: true });
             editor.setSize(null, editor.defaultTextHeight() + 2 * 4);
-            const prompt = document.querySelector('#txt-prompt');
             const tag = document.querySelector('#embed-tag');
+            const prompt = document.querySelector('#txt-prompt');
 
             let t = null;
             const update = () => {
                 const elem = document.createElement(tag.value);
                 elem.src = 'https://contextualize.github.io/dev/';
+
                 if (tag.value === 'script') {
+                    // When the tag is a script, we pass the values as tag attributes.
                     elem.src += 'gen.js'
                     elem.dataset['type'] = 'txt';
                     elem.dataset['prompt'] = prompt.value;
                     elem.dataset['loading'] = '...';
 
                 } else if (tag.value === 'iframe') {
+                    // When the tag is an iframe, we pass the values as URL parameters.
                     const params = new URLSearchParams();
                     params.set('type', 'txt');
                     params.set('prompt', prompt.value);
                     params.set('loading', '...');
                     elem.src += '?' + params.toString();
+
+                    // Set the appropriate attributes to listen to the response and make it pretty.
                     elem.setAttribute('frameborder', 0);
                     elem.setAttribute('height', '24');
                     elem.setAttribute('width', '100%');
-                    elem.setAttribute('onload', '');
                     elem.setAttribute('name', 'i' + String(Math.random()).substring(2, 8));
                     elem.setAttribute('onload', "window.addEventListener('message', x => {if(x.data.name===this.name&&x.data.response)this.outerHTML=x.data.response})");
                 }
+
                 editor.getDoc().setValue(elem.outerHTML);
                 if (t) clearTimeout(t)
                 t = setTimeout(() => {
@@ -82,6 +87,7 @@
                     document.querySelector('#txt-output').appendChild(elem);
                 }, 1_000);
             };
+
             tag.addEventListener('change', update);
             prompt.addEventListener('input', update);
             update();
