@@ -30,6 +30,13 @@
     <h3>Inputs</h3>
     <form>
         <label>
+            Embed tag:
+            <select id="embed-tag" style="width:100%; font-size: inherit;">
+                <option selected>script</option>
+                <option>iframe</option>
+            </select>
+        </label>
+        <label>
             Size:
             <select id="img-size" style="width:100%; font-size: inherit;">
                 <option selected>256</option>
@@ -48,28 +55,53 @@
     <textarea id="img-code"></textarea>
     <script>(function () {
             const wrap = txt => '<' + txt + '></' + 'script' + '>';
-            const elem = document.querySelector('#img-code');
-            const editor = CodeMirror.fromTextArea(elem, { mode: 'htmlmixed', readOnly: true });
+            const code = document.querySelector('#img-code');
+            const editor = CodeMirror.fromTextArea(code, { mode: 'htmlmixed', readOnly: true });
             editor.setSize(null, editor.defaultTextHeight() + 2 * 4);
-            const prompt = document.querySelector('#img-prompt');
+            const tag = document.querySelector('#embed-tag');
             const size = document.querySelector('#img-size');
+            const prompt = document.querySelector('#img-prompt');
 
             let t = null;
             const update = () => {
-                const script = document.createElement('script');
-                script.src = 'https://contextualize.github.io/dev/gen.js';
-                script.dataset['type'] = 'img';
-                script.dataset['size'] = size.value;
-                script.dataset['prompt'] = prompt.value;
-                script.dataset['loading'] = './spin.gif';
-                editor.getDoc().setValue(script.outerHTML);
+                const elem = document.createElement(tag.value);
+                // elem.src = 'https://contextualize.github.io/dev/';
+                elem.src = '../../';
+
+                if (tag.value === 'script') {
+                    // When the tag is a script, we pass the values as tag attributes.
+                    elem.src += 'gen.js'
+                    elem.dataset['type'] = 'img';
+                    elem.dataset['size'] = size.value;
+                    elem.dataset['prompt'] = prompt.value;
+                    elem.dataset['loading'] = './spin.gif';
+
+                } else if (tag.value === 'iframe') {
+                    // When the tag is an iframe, we pass the values as URL parameters.
+                    const params = new URLSearchParams();
+                    params.set('type', 'img');
+                    params.set('size', size.value);
+                    params.set('prompt', prompt.value);
+                    params.set('loading', window.location.href + 'spin.gif');
+                    elem.src += '?' + params.toString();
+
+                    // Set the appropriate attributes to listen to the response and make it pretty.
+                    elem.setAttribute('frameborder', 0);
+                    elem.setAttribute('height', size.value);
+                    elem.setAttribute('width', '100%');
+                    elem.setAttribute('name', 'i' + String(Math.random()).substring(2, 8));
+                    elem.setAttribute('onload', "window.addEventListener('message', x => {if(x.data.name===this.name&&x.data.response)this.outerHTML=x.data.response})");
+                }
+
+                editor.getDoc().setValue(elem.outerHTML);
                 if (t) clearTimeout(t)
                 t = setTimeout(() => {
                     document.querySelector('#img-output').innerHTML = '';
-                    document.querySelector('#img-output').appendChild(script);
+                    document.querySelector('#img-output').appendChild(elem);
                 }, 1_000);
             };
 
+            tag.addEventListener('change', update);
             size.addEventListener('change', update);
             prompt.addEventListener('input', update);
             update();
