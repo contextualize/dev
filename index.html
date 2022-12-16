@@ -1,42 +1,32 @@
 <head>
     <title>benci.ai</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0
-        }
-    </style>
+
+    <script>
+        const url = new URL(window.location.href);
+
+        window.callback = function (response) {
+            let wrapped = '';
+            if (url.searchParams.get('type') === 'txt') {
+                wrapped = `<p>${response}</p>`;
+            } else if (url.searchParams.get('type') === 'img') {
+                wrapped = `<img src="${response}"/>`;
+            }
+            document.body.innerHTML = wrapped;
+            window.parent.postMessage({ name: self.name, response: wrapped }, '*');
+        };
+
+        (function () {
+            const elem = document.createElement('script');
+            elem.src = './gen.js';
+            elem.dataset.callback = 'callback';
+            ['type', 'size', 'prompt']
+                .filter(x => url.searchParams.has(x))
+                .forEach(x => elem.dataset[x] = url.searchParams.get(x));
+            document.head.appendChild(elem);
+            document.currentScript.remove();
+        })();
+
+    </script>
+
+<body></body>
 </head>
-
-<body>
-    <p id="target"></p>
-</body>
-
-<script>
-    // Set the loading text.
-    const url = new URL(window.location.href);
-    const target = document.querySelector('#target');
-    target.innerText = url.searchParams.get('loading') || '...';
-
-    const resize = () => {
-        window.parent.postMessage({ name: self.name, height: target.scrollHeight }, '*');
-    };
-
-    window.callback = function (txt) {
-        target.innerText = txt;
-        resize();
-    };
-
-    (function () {
-        resize();
-        const elem = document.createElement('script');
-        elem.src = './gen.js';
-        elem.dataset.callback = 'callback';
-        ['type', 'size', 'prompt']
-            .filter(x => url.searchParams.has(x))
-            .forEach(x => elem.dataset[x] = url.searchParams.get(x));
-        document.head.appendChild(elem);
-        document.currentScript.remove();
-    })();
-
-</script>
