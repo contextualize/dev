@@ -19,7 +19,7 @@
     target.innerText = url.searchParams.get('loading') || '...';
 
     const resize = () => {
-        window.parent.postMessage({ height: target.scrollHeight });
+        window.parent.postMessage({ name: self.name, height: target.scrollHeight });
     };
 
     window.callback = function (txt) {
