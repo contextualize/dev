@@ -17,7 +17,7 @@
         }
     };
 
-    document.body.innerHTML = wrap(url.searchParams.get('loading')) || (type === 'txt' ? '...' : '');
+    document.body.innerHTML = wrap(url.searchParams.get('loading') || (type === 'txt' ? '...' : ''));
 
     window.callback = function (response) {
         const wrapped = wrap(response);
