@@ -6,15 +6,16 @@
 
 <script>
     // Set the loading text.
-    document.body.innerText = window.frameElement.dataset.loading || '...';
+    const url = new URL(window.location.href);
+    document.body.innerText = url.searchParams.get('loading') || '...';
 
     const resize = () => {
-        window.frameElement.style.display = '';
-        window.frameElement.style.height = 0;
-        window.frameElement.style.height = document.body.scrollHeight + 'px';
-        window.frameElement.style.width = window.frameElement.style.width || '100%';
-        window.frameElement.setAttribute('scrolling', 'no');
-        window.frameElement.setAttribute('frameborder', 0);
+        // window.frameElement.style.display = '';
+        // window.frameElement.style.height = 0;
+        // window.frameElement.style.height = document.body.scrollHeight + 'px';
+        // window.frameElement.style.width = window.frameElement.style.width || '100%';
+        // window.frameElement.setAttribute('scrolling', 'no');
+        // window.frameElement.setAttribute('frameborder', 0);
     };
 
     window.callback = function (txt) {
@@ -28,8 +29,8 @@
         elem.src = './gen.js';
         elem.dataset.callback = 'callback';
         ['type', 'size', 'prompt']
-            .filter(x => window.frameElement.dataset[x])
-            .forEach(x => elem.dataset[x] = window.frameElement.dataset[x]);
+            .filter(x => url.searchParams.has(x))
+            .forEach(x => elem.dataset[x] = url.searchParams.get(x));
         document.head.appendChild(elem);
         document.currentScript.remove();
     })();
