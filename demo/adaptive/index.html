@@ -1,5 +1,5 @@
 <head>
-    <title>Generative Text Demo</title>
+    <title>Adaptive Text Demo</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/xml/xml.min.js"></script>
@@ -16,32 +16,24 @@
             font-size: 1.25em;
             font-family: sans-serif;
         }
-
-        .CodeMirror {
-            font-size: small;
-            outline: 1px solid #333
-        }
     </style>
 </head>
 
 <body>
-    <h2>Generative Text Demo</h2>
+    <h2>Adaptive Text Demo</h2>
 
     <h3>Inputs</h3>
     <form>
         <label>
             Prompt:
             <input id="txt-prompt" style="width:100%; font-size: inherit;"
-                value="explain financial literacy to a first-time visitor of this website" />
+                value="Welcome message to someone who has visited this site {{times}} times before, mentioning how many times this user has visited before. Use the tone of a website welcome message and don't talk about other users." />
         </label>
     </form>
 
-    <h3>Code</h3>
-    <textarea id="txt-code"></textarea>
     <script>(function () {
-            const elem = document.querySelector('#txt-code');
-            const editor = CodeMirror.fromTextArea(elem, { mode: 'htmlmixed', readOnly: true });
-            editor.setSize(null, editor.defaultTextHeight() + 2 * 4);
+            const visits = parseInt(sessionStorage.getItem('visit-count')) || 0;
+            sessionStorage.setItem('visit-count', visits + 1);
             const prompt = document.querySelector('#txt-prompt');
 
             let t = null;
@@ -49,9 +41,8 @@
                 const script = document.createElement('script');
                 script.src = 'https://contextualize.github.io/dev/gen.js';
                 script.dataset['type'] = 'txt';
-                script.dataset['prompt'] = prompt.value;
+                script.dataset['prompt'] = prompt.value.replace('{{times}}', visits);
                 script.dataset['loading'] = '...';
-                editor.getDoc().setValue(script.outerHTML);
                 if (t) clearTimeout(t)
                 t = setTimeout(() => {
                     document.querySelector('#txt-output').innerHTML = '';
