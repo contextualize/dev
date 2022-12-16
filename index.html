@@ -1,25 +1,29 @@
 <head>
     <title>benci.ai</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0
+        }
+    </style>
 </head>
 
-<body></body>
+<body>
+    <p id="target"></p>
+</body>
 
 <script>
     // Set the loading text.
     const url = new URL(window.location.href);
-    document.body.innerText = url.searchParams.get('loading') || '...';
+    const target = document.querySelector('#target');
+    target.innerText = url.searchParams.get('loading') || '...';
 
     const resize = () => {
-        // window.frameElement.style.display = '';
-        // window.frameElement.style.height = 0;
-        // window.frameElement.style.height = document.body.scrollHeight + 'px';
-        // window.frameElement.style.width = window.frameElement.style.width || '100%';
-        // window.frameElement.setAttribute('scrolling', 'no');
-        // window.frameElement.setAttribute('frameborder', 0);
+        window.parent.postMessage({ height: target.scrollHeight });
     };
 
     window.callback = function (txt) {
-        document.body.innerText = txt;
+        target.innerText = txt;
         resize();
     };
 
